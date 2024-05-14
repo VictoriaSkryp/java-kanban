@@ -1,15 +1,9 @@
-import java.util.HashMap;
-
 public class Main {
 
     public static void main(String[] args) {
         System.out.println("Поехали!");
 
-        HashMap<Integer, Task> tasks = new HashMap<>();
-        HashMap<Integer, Subtask> subtasks = new HashMap<>();
-        HashMap<Integer, Epic> epics = new HashMap<>();
-
-        Manager manager = new Manager(tasks, subtasks, epics);
+        Manager manager = new Manager();
 
         Task buyProducts = new Task("Сходить в магазин", "Купить: Молоко, хлеб, колбасу", Status.NEW);
         Task cutDog = new Task("Постричь собаку", "В пятницу сходить к грумеру", Status.NEW);

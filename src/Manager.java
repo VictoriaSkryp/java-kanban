@@ -3,17 +3,15 @@ import java.util.HashMap;
 import java.util.List;
 
 public class Manager {
-    private final HashMap<Integer, Task> tasks;
-    private final HashMap<Integer, Subtask> subtasks;
-    private final HashMap<Integer, Epic> epics;
+    private final HashMap<Integer, Task> tasks = new HashMap<>();
+    private final HashMap<Integer, Subtask> subtasks = new HashMap<>();
+    private final HashMap<Integer, Epic> epics = new HashMap<>();
     private int generatedTaskId = 0;
     private int generatedSubtaskId = 0;
     private int generatedEpicId = 0;
 
-    public Manager(HashMap<Integer, Task> tasks, HashMap<Integer, Subtask> subtasks, HashMap<Integer, Epic> epics) {
-        this.tasks = tasks;
-        this.subtasks = subtasks;
-        this.epics = epics;
+    public Manager() {
+
     }
 
     public ArrayList<Task> getAllTasks() {
@@ -141,13 +139,13 @@ public class Manager {
     private void updateEpic(Epic epic) {
         if (epics.containsKey(epic.getId())) {
             ArrayList<Subtask> subtasksByEpic = getSubtasksByEpicId(epic.getId());
-            if (epic.getStatus() != Status.NEW && (epic.getSubtaskIds().isEmpty() || epic.getSubtaskIds() == null)) {
+            if (isAllSubtaskInNew(subtasksByEpic) || epic.getSubtaskIds().isEmpty()) {
                 epic.setStatus(Status.NEW);
             }
-            if (epic.getStatus() != Status.IN_PROGRESS && isAnySubtaskInProgress(subtasksByEpic)) {
+            if (isAnySubtaskInProgress(subtasksByEpic)) {
                 epic.setStatus(Status.IN_PROGRESS);
             }
-            if (epic.getStatus() != Status.DONE && isAllSubtaskInDone(subtasksByEpic)) {
+            if (isAllSubtaskInDone(subtasksByEpic)) {
                 epic.setStatus(Status.DONE);
             }
             epics.put(epic.getId(), epic);
@@ -169,6 +167,18 @@ public class Manager {
         }
         for (Subtask subtask : subtasks) {
             if (subtask.getStatus() != Status.DONE) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean isAllSubtaskInNew(List<Subtask> subtasks) {
+        if (subtasks == null || subtasks.isEmpty()) {
+            return false;
+        }
+        for (Subtask subtask : subtasks) {
+            if (subtask.getStatus() != Status.NEW) {
                 return false;
             }
         }
