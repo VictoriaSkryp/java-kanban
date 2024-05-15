@@ -10,10 +10,6 @@ public class Manager {
     private int generatedSubtaskId = 0;
     private int generatedEpicId = 0;
 
-    public Manager() {
-
-    }
-
     public ArrayList<Task> getAllTasks() {
         return new ArrayList<>(tasks.values());
     }
@@ -141,24 +137,13 @@ public class Manager {
             ArrayList<Subtask> subtasksByEpic = getSubtasksByEpicId(epic.getId());
             if (isAllSubtaskInNew(subtasksByEpic) || epic.getSubtaskIds().isEmpty()) {
                 epic.setStatus(Status.NEW);
-            }
-            if (isAnySubtaskInProgress(subtasksByEpic)) {
-                epic.setStatus(Status.IN_PROGRESS);
-            }
-            if (isAllSubtaskInDone(subtasksByEpic)) {
+            } else if (isAllSubtaskInDone(subtasksByEpic)) {
                 epic.setStatus(Status.DONE);
+            } else {
+                epic.setStatus(Status.IN_PROGRESS);
             }
             epics.put(epic.getId(), epic);
         }
-    }
-
-    private boolean isAnySubtaskInProgress(List<Subtask> subtasks) {
-        for (Subtask subtask : subtasks) {
-            if (subtask.getStatus() == Status.IN_PROGRESS) {
-                return true;
-            }
-        }
-        return false;
     }
 
     private boolean isAllSubtaskInDone(List<Subtask> subtasks) {
