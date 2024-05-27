@@ -3,67 +3,94 @@ public class Main {
     public static void main(String[] args) {
         System.out.println("Поехали!");
 
-        Manager manager = new Manager();
+        TaskManager defaultTaskManager = Managers.getDefault();
 
         Task buyProducts = new Task("Сходить в магазин", "Купить: Молоко, хлеб, колбасу", Status.NEW);
         Task cutDog = new Task("Постричь собаку", "В пятницу сходить к грумеру", Status.NEW);
 
         Epic houseCleaning = new Epic("Убраться в квартире", "Убраться в кухне, коридоре и других комнатах.", Status.NEW);
-        int houseCleaningId = manager.createEpic(houseCleaning);
+        int houseCleaningId = defaultTaskManager.createEpic(houseCleaning);
         Epic partyPreparing = new Epic("Подготовиться к вечеринке", "Купить пиццу, купить напитки.", Status.NEW);
-        int partyPreparingId = manager.createEpic(partyPreparing);
+        int partyPreparingId = defaultTaskManager.createEpic(partyPreparing);
 
         Subtask cleanKitchen = new Subtask("Убраться в кухне", "Пропылесосить, помыть пол, вытереть пыль", Status.NEW, houseCleaningId);
         Subtask cleanHall = new Subtask("Убраться в коридоре", "Пропылесосить, помыть пол, вытереть пыль", Status.NEW, houseCleaningId);
         Subtask buyPizza = new Subtask("Купить пиццу", "Купить 3 маргариты, 2 четыре сыра.", Status.NEW, partyPreparingId);
 
-        manager.createTask(buyProducts);
-        manager.createTask(cutDog);
+        defaultTaskManager.createTask(buyProducts);
+        defaultTaskManager.createTask(cutDog);
 
-        manager.createSubtask(cleanKitchen);
-        manager.createSubtask(cleanHall);
-        manager.createSubtask(buyPizza);
+        defaultTaskManager.createSubtask(cleanKitchen);
+        defaultTaskManager.createSubtask(cleanHall);
+        defaultTaskManager.createSubtask(buyPizza);
+
+        System.out.println("Список всех задач:");
+        printAllTasks(defaultTaskManager);
 
         System.out.println("Список задач:");
-        System.out.println(manager.getAllTasks());
+        System.out.println(defaultTaskManager.getAllTasks());
 
         System.out.println("\nСписок подзадач:");
-        System.out.println(manager.getAllSubtasks());
+        System.out.println(defaultTaskManager.getAllSubtasks());
 
         System.out.println("\nСписок эпиков:");
-        System.out.println(manager.getAllEpics());
+        System.out.println(defaultTaskManager.getAllEpics());
 
         buyProducts.setStatus(Status.IN_PROGRESS);
-        manager.updateTask(buyProducts);
+        defaultTaskManager.updateTask(buyProducts);
 
         cleanHall.setStatus(Status.DONE);
-        manager.updateSubtask(cleanHall);
+        defaultTaskManager.updateSubtask(cleanHall);
 
         cleanKitchen.setStatus(Status.IN_PROGRESS);
-        manager.updateSubtask(cleanKitchen);
+        defaultTaskManager.updateSubtask(cleanKitchen);
 
         buyPizza.setStatus(Status.DONE);
-        manager.updateSubtask(buyPizza);
+        defaultTaskManager.updateSubtask(buyPizza);
 
         System.out.println("\n\nСписок задач:");
-        System.out.println(manager.getAllTasks());
+        System.out.println(defaultTaskManager.getAllTasks());
 
         System.out.println("\nСписок подзадач:");
-        System.out.println(manager.getAllSubtasks());
+        System.out.println(defaultTaskManager.getAllSubtasks());
 
         System.out.println("\nСписок эпиков:");
-        System.out.println(manager.getAllEpics());
+        System.out.println(defaultTaskManager.getAllEpics());
 
-        manager.deleteTask(cutDog.getId());
-        manager.deleteEpic(partyPreparing.getId());
+        defaultTaskManager.deleteTaskById(cutDog.getId());
+        defaultTaskManager.deleteEpicById(partyPreparing.getId());
 
         System.out.println("\n\nСписок задач:");
-        System.out.println(manager.getAllTasks());
+        System.out.println(defaultTaskManager.getAllTasks());
 
         System.out.println("\nСписок подзадач:");
-        System.out.println(manager.getAllSubtasks());
+        System.out.println(defaultTaskManager.getAllSubtasks());
 
         System.out.println("\nСписок эпиков:");
-        System.out.println(manager.getAllEpics());
+        System.out.println(defaultTaskManager.getAllEpics());
+    }
+
+    private static void printAllTasks(TaskManager taskManager) {
+        System.out.println("Задачи:");
+        for (int i = 1; i <= taskManager.getAllTasks().size(); i++) {
+            System.out.println(taskManager.getTaskById(i));
+        }
+        System.out.println("Эпики:");
+        for (int i = 1; i <= taskManager.getAllEpics().size(); i ++) {
+            System.out.println(taskManager.getEpicById(i));
+
+            for (int j = 1; j <= taskManager.getEpicById(i).getSubtaskIds().size(); j++) {
+                System.out.println("--> " + taskManager.getSubtaskById(j));
+            }
+        }
+        System.out.println("Подзадачи:");
+        for (int i = 1; i < taskManager.getAllSubtasks().size(); i++) {
+            System.out.println(taskManager.getSubtaskById(i));
+        }
+
+        System.out.println("История:");
+        for (int i = 0; i < taskManager.getHistory().size(); i ++) {
+            System.out.println(taskManager.getHistory().get(i));
+        }
     }
 }
