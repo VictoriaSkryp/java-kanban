@@ -9,10 +9,8 @@ public class InMemoryHistoryManager implements HistoryManager {
     public void add(Task task) {
         if (tasksHistory.size() == 10) {
             tasksHistory.removeLast();
-            tasksHistory.add(task);
-        } else {
-            tasksHistory.add(task);
         }
+        tasksHistory.add(task);
     }
 
     @Override
